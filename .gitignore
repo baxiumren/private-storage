@@ -1,0 +1,11 @@
+# User data & uploads (personal files)
+uploads/
+data/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
