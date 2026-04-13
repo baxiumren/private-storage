@@ -1,6 +1,8 @@
 # User data & uploads (personal files)
-uploads/
-data/
+uploads/*
+!uploads/.gitkeep
+data/*
+!data/.gitkeep
 
 # OS files
 .DS_Store
