@@ -65,18 +65,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
-            --maroon:        #800000;
-            --maroon-dark:   #5a0000;
-            --maroon-light:  #a01818;
-            --maroon-bright: #c02828;
-            --gold:          #c9a84c;
-            --gold-light:    #e8c97d;
-            --bg:            #07000a;
-            --glass:         rgba(160, 10, 10, 0.09);
-            --glass-border:  rgba(180, 40, 40, 0.22);
-            --text:          #f0e4e4;
-            --text-dim:      #b09090;
-            --text-muted:    #705060;
+            --maroon:        #3b82f6;
+            --maroon-dark:   #1d4ed8;
+            --maroon-light:  #2563eb;
+            --maroon-bright: #60a5fa;
+            --gold:          #93c5fd;
+            --gold-light:    #bfdbfe;
+            --bg:            #040c18;
+            --glass:         rgba(30, 80, 200, 0.09);
+            --glass-border:  rgba(59, 130, 246, 0.22);
+            --text:          #e4edf5;
+            --text-dim:      #8aaac0;
+            --text-muted:    #3d5570;
         }
 
         body {
@@ -100,18 +100,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .orb-1 {
             width: 520px; height: 520px;
-            background: radial-gradient(circle, rgba(128,0,0,0.45) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(29,78,216,0.45) 0%, transparent 70%);
             top: -160px; left: -160px;
         }
         .orb-2 {
             width: 420px; height: 420px;
-            background: radial-gradient(circle, rgba(100,0,25,0.38) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(15,40,140,0.38) 0%, transparent 70%);
             bottom: -120px; right: -120px;
             animation-delay: -5s;
         }
         .orb-3 {
             width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(160,50,0,0.22) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
             top: 55%; left: 55%;
             animation-delay: -2.5s;
         }
@@ -124,8 +124,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .bg-grid {
             position: fixed; inset: 0; z-index: 0; pointer-events: none;
             background-image:
-                linear-gradient(rgba(180,40,40,0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(180,40,40,0.04) 1px, transparent 1px);
+                linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
             background-size: 44px 44px;
         }
 
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .card {
-            background: rgba(18, 2, 8, 0.75);
+            background: rgba(5, 14, 35, 0.75);
             border: 1px solid var(--glass-border);
             border-radius: 24px;
             padding: 48px 40px;
@@ -145,7 +145,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow:
                 inset 0 0 0 1px rgba(255,255,255,0.04),
                 0 32px 80px rgba(0,0,0,0.65),
-                0 0 60px rgba(128,0,0,0.18);
+                0 0 60px rgba(29,78,216,0.2);
         }
 
         /* ── Logo ── */
@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 18px;
             font-size: 30px;
-            box-shadow: 0 8px 32px rgba(128,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.1);
+            box-shadow: 0 8px 32px rgba(29,78,216,0.55), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
         .logo h1 {
@@ -223,9 +223,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .form-input::placeholder { color: rgba(176,144,144,0.35); }
         .form-input:focus {
-            background: rgba(160,15,15,0.1);
+            background: rgba(30,80,200,0.08);
             border-color: var(--maroon-bright);
-            box-shadow: 0 0 0 3px rgba(128,0,0,0.18);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
         }
         .input-wrap:focus-within .input-icon { color: var(--maroon-bright); }
 
@@ -233,17 +233,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .btn-login {
             width: 100%; padding: 14px;
             background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-light) 100%);
-            border: 1px solid rgba(200,40,40,0.35);
+            border: 1px solid rgba(59,130,246,0.35);
             border-radius: 12px;
             color: #fff; font-size: 15px; font-weight: 600;
             font-family: 'Inter', sans-serif;
             cursor: pointer; transition: all 0.22s; margin-top: 10px;
-            box-shadow: 0 4px 22px rgba(128,0,0,0.42);
+            box-shadow: 0 4px 22px rgba(29,78,216,0.42);
             display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-login:hover {
             background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-bright) 100%);
-            box-shadow: 0 6px 32px rgba(128,0,0,0.62);
+            box-shadow: 0 6px 32px rgba(59,130,246,0.55);
             transform: translateY(-1px);
         }
         .btn-login:active  { transform: translateY(0); }
