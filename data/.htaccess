@@ -1,0 +1,2 @@
+# Folder data (log, session attempts, share links) tidak boleh diakses dari web
+Require all denied

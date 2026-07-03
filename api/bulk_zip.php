@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once 'config.private.php';
+require_once __DIR__ . '/../config.private.php';
+secure_session_start();
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     http_response_code(403); exit('Not logged in');

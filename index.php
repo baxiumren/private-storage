@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once 'config.private.php';
+secure_session_start();
 
 if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
     header('Location: dashboard.php');
@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (isset($valid_users[$username]) && password_verify($password, $valid_users[$username])) {
             clear_login_attempts($ip);
+            session_regenerate_id(true); // anti session-fixation: ID baru tiap login
             $_SESSION['loggedin']   = true;
             $_SESSION['username']   = $username;
             $_SESSION['ip']         = $ip;
@@ -58,222 +59,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Private Storage — Sign In</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='6' y='6' width='88' height='88' rx='26' fill='%23055ff0'/><rect x='9' y='9' width='82' height='82' rx='23' fill='none' stroke='%23FFD700' stroke-width='5'/><circle cx='50' cy='50' r='19' fill='none' stroke='white' stroke-width='7'/><circle cx='50' cy='50' r='6' fill='%23FFD700'/><path d='M50 21v10M50 69v10M21 50h10M69 50h10' stroke='white' stroke-width='7' stroke-linecap='round'/></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-            --maroon:        #3b82f6;
-            --maroon-dark:   #1d4ed8;
-            --maroon-light:  #2563eb;
-            --maroon-bright: #60a5fa;
-            --gold:          #93c5fd;
-            --gold-light:    #bfdbfe;
-            --bg:            #040c18;
-            --glass:         rgba(30, 80, 200, 0.09);
-            --glass-border:  rgba(59, 130, 246, 0.22);
-            --text:          #e4edf5;
-            --text-dim:      #8aaac0;
-            --text-muted:    #3d5570;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        /* ── Background orbs ── */
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(90px);
-            pointer-events: none;
-            z-index: 0;
-            animation: drift 10s ease-in-out infinite alternate;
-        }
-        .orb-1 {
-            width: 520px; height: 520px;
-            background: radial-gradient(circle, rgba(29,78,216,0.45) 0%, transparent 70%);
-            top: -160px; left: -160px;
-        }
-        .orb-2 {
-            width: 420px; height: 420px;
-            background: radial-gradient(circle, rgba(15,40,140,0.38) 0%, transparent 70%);
-            bottom: -120px; right: -120px;
-            animation-delay: -5s;
-        }
-        .orb-3 {
-            width: 260px; height: 260px;
-            background: radial-gradient(circle, rgba(59,130,246,0.2) 0%, transparent 70%);
-            top: 55%; left: 55%;
-            animation-delay: -2.5s;
-        }
-        @keyframes drift {
-            from { transform: translate(0,0) scale(1); }
-            to   { transform: translate(25px,18px) scale(1.06); }
-        }
-
-        /* Subtle grid */
-        .bg-grid {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image:
-                linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
-            background-size: 44px 44px;
-        }
-
-        /* ── Card ── */
-        .login-wrap {
-            position: relative; z-index: 1;
-            width: 100%; max-width: 420px; padding: 20px;
-        }
-
-        .card {
-            background: rgba(5, 14, 35, 0.75);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 48px 40px;
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            box-shadow:
-                inset 0 0 0 1px rgba(255,255,255,0.04),
-                0 32px 80px rgba(0,0,0,0.65),
-                0 0 60px rgba(29,78,216,0.2);
-        }
-
-        /* ── Logo ── */
-        .logo { text-align: center; margin-bottom: 40px; }
-
-        .logo-icon {
-            width: 68px; height: 68px;
-            background: linear-gradient(135deg, var(--maroon-dark), var(--maroon-bright));
-            border-radius: 18px;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 18px;
-            font-size: 30px;
-            box-shadow: 0 8px 32px rgba(29,78,216,0.55), inset 0 1px 0 rgba(255,255,255,0.1);
-        }
-
-        .logo h1 {
-            font-size: 22px; font-weight: 700; color: var(--text);
-            letter-spacing: -0.4px; margin-bottom: 6px;
-        }
-        .logo p { font-size: 13px; color: var(--text-dim); }
-
-        /* ── Error box ── */
-        .error-box {
-            background: rgba(180,0,0,0.13);
-            border: 1px solid rgba(200,0,0,0.32);
-            border-radius: 12px;
-            padding: 13px 16px;
-            margin-bottom: 24px;
-            display: flex; align-items: center; gap: 10px;
-            font-size: 13px; color: #ff9090; line-height: 1.4;
-        }
-        .error-box i { flex-shrink: 0; }
-
-        /* ── Success box ── */
-        .success-box {
-            background: rgba(0,130,60,0.13);
-            border: 1px solid rgba(0,180,80,0.32);
-            border-radius: 12px;
-            padding: 13px 16px;
-            margin-bottom: 24px;
-            display: flex; align-items: center; gap: 10px;
-            font-size: 13px; color: #7effc0; line-height: 1.4;
-        }
-        .success-box i { flex-shrink: 0; }
-
-        /* ── Form ── */
-        .form-group { margin-bottom: 20px; }
-
-        .form-label {
-            display: block;
-            font-size: 11px; font-weight: 600;
-            color: var(--text-dim);
-            text-transform: uppercase; letter-spacing: 0.9px;
-            margin-bottom: 8px;
-        }
-
-        .input-wrap { position: relative; }
-
-        .input-icon {
-            position: absolute; left: 15px; top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted); font-size: 13px;
-            transition: color 0.2s; pointer-events: none;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 13px 15px 13px 42px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(180,40,40,0.2);
-            border-radius: 12px;
-            color: var(--text);
-            font-size: 15px; font-family: 'Inter', sans-serif;
-            outline: none; transition: all 0.2s;
-        }
-        .form-input::placeholder { color: rgba(176,144,144,0.35); }
-        .form-input:focus {
-            background: rgba(30,80,200,0.08);
-            border-color: var(--maroon-bright);
-            box-shadow: 0 0 0 3px rgba(59,130,246,0.18);
-        }
-        .input-wrap:focus-within .input-icon { color: var(--maroon-bright); }
-
-        /* ── Button ── */
-        .btn-login {
-            width: 100%; padding: 14px;
-            background: linear-gradient(135deg, var(--maroon-dark) 0%, var(--maroon-light) 100%);
-            border: 1px solid rgba(59,130,246,0.35);
-            border-radius: 12px;
-            color: #fff; font-size: 15px; font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer; transition: all 0.22s; margin-top: 10px;
-            box-shadow: 0 4px 22px rgba(29,78,216,0.42);
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .btn-login:hover {
-            background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-bright) 100%);
-            box-shadow: 0 6px 32px rgba(59,130,246,0.55);
-            transform: translateY(-1px);
-        }
-        .btn-login:active  { transform: translateY(0); }
-        .btn-login:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-
-        /* ── Footer note ── */
-        .card-footer {
-            display: flex; align-items: center; justify-content: center;
-            gap: 10px; margin-top: 28px;
-            font-size: 11px; color: var(--text-muted);
-        }
-        .sep { width: 3px; height: 3px; border-radius: 50%; background: rgba(180,80,80,0.45); }
-
-        @media (max-width: 480px) {
-            .card { padding: 36px 22px; }
-        }
-    </style>
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/cursor.css">
 </head>
 <body>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
     <div class="bg-grid"></div>
+    <div class="particles" id="particles"></div>
 
     <div class="login-wrap">
         <div class="card">
             <div class="logo">
-                <div class="logo-icon">🗄️</div>
+                <div class="logo-icon"><i class="fas fa-vault"></i></div>
                 <h1>Private Storage</h1>
-                <p>Secure personal file vault</p>
+                <p>Secure File Vault</p>
             </div>
 
             <?php if ($success): ?>
@@ -332,6 +138,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
         });
+
+        // ══ Partikel emas & biru melayang ══
+        (function(){
+            if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const wrap = document.getElementById('particles');
+            const COLORS = ['255,215,0','91,157,255','255,215,0','47,123,255']; // dominan gold
+            for(let i = 0; i < 26; i++){
+                const p = document.createElement('span');
+                p.className = 'particle';
+                const size = (Math.random() * 3 + 1.5).toFixed(1);
+                const c = COLORS[i % COLORS.length];
+                p.style.cssText = `
+                    left:${(Math.random()*100).toFixed(1)}%;
+                    width:${size}px;height:${size}px;
+                    background:rgba(${c},.9);
+                    box-shadow:0 0 ${size*3}px rgba(${c},.7);
+                    --px:${(Math.random()*90-45).toFixed(0)}px;
+                    --po:${(Math.random()*.5+.35).toFixed(2)};
+                    animation-duration:${(Math.random()*14+9).toFixed(1)}s;
+                    animation-delay:-${(Math.random()*20).toFixed(1)}s;`;
+                wrap.appendChild(p);
+            }
+        })();
+
+        // ══ 3D tilt kartu ngikut mouse ══
+        (function(){
+            if(matchMedia('(pointer: coarse)').matches) return;
+            if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const card = document.querySelector('.card');
+            const wrap = document.querySelector('.login-wrap');
+            let raf = null;
+            document.addEventListener('mousemove', e => {
+                if(raf) return;
+                raf = requestAnimationFrame(() => {
+                    const r = wrap.getBoundingClientRect();
+                    const cx = r.left + r.width/2, cy = r.top + r.height/2;
+                    const dx = (e.clientX - cx) / (innerWidth/2);
+                    const dy = (e.clientY - cy) / (innerHeight/2);
+                    card.style.transform = `rotateY(${(dx*5).toFixed(2)}deg) rotateX(${(-dy*5).toFixed(2)}deg)`;
+                    raf = null;
+                });
+            });
+            document.addEventListener('mouseleave', () => { card.style.transform = 'rotateY(0) rotateX(0)'; });
+        })();
     </script>
 </body>
 </html>

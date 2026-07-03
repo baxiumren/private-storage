@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Sarung tangan Mickey — jari tengah wkwk -->
+  <g fill="#ffffff" stroke="#1a1a1a" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">
+    <!-- jari tengah panjang -->
+    <rect x="13.2" y="1" width="5.8" height="18.5" rx="2.9"/>
+    <!-- jari terlipat kiri (2 buku) -->
+    <path d="M6.6 17.8 a2.9 2.9 0 0 1 5.8 0 v2.8 h-5.8 Z"/>
+    <!-- jari terlipat kanan -->
+    <path d="M19.8 17.8 a2.9 2.9 0 0 1 5.8 0 v2.8 h-5.8 Z"/>
+    <!-- kepalan membulat -->
+    <path d="M9 19.6
+             q-2.6 .6 -2.6 3.4
+             q0 3 2.3 4.6
+             q2.3 1.6 7.4 1.6
+             q5.1 0 7.4 -1.6
+             q2.3 -1.6 2.3 -4.6
+             q0 -2.8 -2.6 -3.4 Z"/>
+    <!-- garis manset -->
+    <path d="M10.4 27.6 q5.7 2.4 11.2 0" fill="none" opacity=".5"/>
+  </g>
+</svg>

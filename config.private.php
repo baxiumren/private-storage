@@ -5,7 +5,7 @@
 // Daftar user yang boleh login
 // Format: 'username' => 'password_hash'
 $valid_users = [
-    'admin' => '$2y$10$cFb3ubeHjp7mvJNCrKGhc.9QIYh.k3TvubeBoHrBq9U/Gp79JqULe', // admin123
+    'admin' => '$2y$10$c1WyvwQo4.vSPuxoxDNL7uv9Lkc.iafXwEclNre.pGAElMFBTVktq', // admin123
 ];
 
 // Waktu timeout session (detik) - 5 jam
@@ -39,6 +39,26 @@ define('ALLOWED_EXTENSIONS', [
 // === LOGIN PROTECTION ===
 define('MAX_LOGIN_ATTEMPTS', 5);
 define('LOCKOUT_DURATION', 900); // 15 menit
+
+// ============================================================
+// SESSION HARDENING
+// Cookie session: HttpOnly (JS gak bisa baca), SameSite=Lax
+// (tahan CSRF dasar), Secure otomatis kalau lewat HTTPS.
+// Panggil ini SEBELUM akses $_SESSION, pengganti session_start().
+// ============================================================
+function secure_session_start() {
+    if (session_status() === PHP_SESSION_ACTIVE) return;
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'domain'   => '',
+        'secure'   => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    session_name('PSVAULT');
+    session_start();
+}
 
 // ============================================================
 // CSRF FUNCTIONS

@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once 'config.private.php';
+require_once __DIR__ . '/../config.private.php';
+secure_session_start();
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     echo json_encode(['success' => false, 'message' => 'Not logged in']); exit;
@@ -26,6 +26,8 @@ function share_base_url() {
     $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
     $host  = $_SERVER['HTTP_HOST'] ?? 'localhost';
     $path  = dirname($_SERVER['REQUEST_URI'] ?? '/');
+    // Endpoint ini ada di /api — share.php publik ada satu level di atasnya (root app)
+    $path  = preg_replace('~/api/?$~', '', str_replace('\\', '/', $path));
     return rtrim($proto . '://' . $host . $path, '/');
 }
 

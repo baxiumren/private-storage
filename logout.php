@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once 'config.private.php';
+secure_session_start();
 
 // Log aktivitas logout ke file
 if (isset($_SESSION['username'])) {

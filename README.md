@@ -123,39 +123,56 @@ A self-hosted personal file manager built with PHP. Designed for deployment on s
 ## 📁 Project Structure
 
 ```
-storage-project/
+private-storage/
 ├── index.php               # Login page
 ├── dashboard.php           # Main file manager UI
 ├── logout.php              # Session destroy + redirect
 ├── share.php               # Public share link handler
 ├── config.private.php      # Credentials, constants, helper functions
-├── ajax_upload.php         # Handle file uploads
-├── ajax_actions.php        # Rename, delete, copy
-├── ajax_move.php           # Move files/folders
-├── ajax_bulk.php           # Bulk delete/move
-├── ajax_bulk_zip.php       # Bulk download as ZIP
-├── ajax_zip.php            # Folder download as ZIP
-├── ajax_create_folder.php  # Create new folder
-├── ajax_trash.php          # Recycle bin operations
-├── ajax_batch_rename.php   # Batch rename
-├── ajax_share.php          # Share link create/list/delete
-├── ajax_edit_file.php      # Text file editor
-├── ajax_folder_meta.php    # Folder color/icon
-├── ajax_change_password.php# Change password
-├── ajax_log.php            # Activity log reader
-├── ajax_search.php         # Global search
-├── ajax_session.php        # Session extend
-├── uploads/                # User files (excluded from git)
-└── data/                   # App data: logs, trash meta, share links (excluded from git)
+├── assets/
+│   ├── css/
+│   │   ├── app.css         # Dashboard theme (dark + light mode)
+│   │   └── login.css       # Login page theme
+│   └── js/
+│       └── app.js          # All dashboard logic (upload, modals, search, ...)
+├── api/                    # JSON endpoints (all CSRF + session protected)
+│   ├── upload.php          # File upload (1 file per request — stabil)
+│   ├── actions.php         # Rename, delete, copy
+│   ├── move.php            # Move files/folders
+│   ├── bulk.php            # Bulk delete/move
+│   ├── bulk_zip.php        # Bulk download as ZIP
+│   ├── zip.php             # Folder download as ZIP
+│   ├── create_folder.php   # Create new folder
+│   ├── trash.php           # Recycle bin operations
+│   ├── batch_rename.php    # Batch rename
+│   ├── share.php           # Share link create/list/delete
+│   ├── edit_file.php       # Text file editor
+│   ├── folder_meta.php     # Folder color/icon
+│   ├── change_password.php # Change password
+│   ├── log.php             # Activity log reader
+│   ├── search.php          # Global search
+│   └── session.php         # Session extend
+├── uploads/                # User files (excluded from git, PHP execution blocked)
+└── data/                   # App data: logs, trash meta, share links (blocked from web)
 ```
 
 ---
 
 ## 🎨 UI Preview
 
-- **Design:** Maroon + Glassmorphism dark theme
-- **Font:** Inter
+- **Design:** Midnight Vault — deep navy + royal blue + gold accents, dark & light mode
+- **Palette:** `#055ff0` (blue) · `#FFD700` (gold) · `#020b25` (background)
+- **Fonts:** Fraunces (display) + Instrument Sans (body)
 - **Icons:** Font Awesome 6
+
+## 📤 Upload Behavior
+
+Files are uploaded **sequentially, one file per HTTP request**:
+- Stable for 1, 2, or many files — request size never exceeds `post_max_size`
+- Per-file progress bar + overall progress
+- Automatic 1× retry on network failure
+- Client-side validation (extension + size) before anything is sent
+- Server limit: 100MB per file (`MAX_FILE_SIZE` + `.htaccess` php values)
 
 ---
 

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- Sarung tangan Mickey — telunjuk nunjuk ke atas -->
+  <g fill="#ffffff" stroke="#1a1a1a" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round">
+    <!-- telunjuk panjang -->
+    <rect x="13.2" y="1" width="5.8" height="16.5" rx="2.9"/>
+    <!-- kepalan membulat -->
+    <path d="M10.4 15.2
+             q-3.6 .4 -3.6 4.4
+             q0 3.6 2.4 5.6
+             q2.4 2 6.8 2
+             q4.4 0 6.8 -2
+             q2.4 -2 2.4 -5.6
+             q0 -4 -3.6 -4.4 Z"/>
+    <!-- garis jari terlipat -->
+    <path d="M19.6 16.4 v5.8" opacity=".4" fill="none"/>
+    <path d="M23.2 17 v4.6" opacity=".4" fill="none"/>
+    <!-- garis manset -->
+    <path d="M10.2 25.8 q5.9 3 11.6 0" fill="none" opacity=".5"/>
+  </g>
+</svg>

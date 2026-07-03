@@ -1,8 +1,10 @@
 # User data & uploads (personal files)
 uploads/*
 !uploads/.gitkeep
+!uploads/.htaccess
 data/*
 !data/.gitkeep
+!data/.htaccess
 
 # OS files
 .DS_Store

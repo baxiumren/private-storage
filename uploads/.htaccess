@@ -1,0 +1,15 @@
+# File di uploads boleh diakses (untuk preview/download),
+# tapi eksekusi PHP dimatikan total — lapisan kedua setelah whitelist ekstensi
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<FilesMatch "\.(?i:php|phtml|phar|pht|php[0-9]|cgi|pl|py|sh)$">
+    Require all denied
+</FilesMatch>
+
+# SVG bisa bawa JavaScript — CSP ini mematikan script saat SVG dibuka langsung
+<IfModule mod_headers.c>
+    <FilesMatch "\.(?i:svg)$">
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'"
+    </FilesMatch>
+</IfModule>

@@ -1,19 +1,82 @@
 # Disable directory listing
 Options -Indexes
 
+# ============================================================
+# CLEAN URL — sembunyikan .php dari address bar
+# /index.php → /   ·   /dashboard.php → /dashboard
+# api/ dikecualikan (dipanggil AJAX langsung, jangan di-redirect)
+# ============================================================
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # index.php → / (redirect, biar URL bar bersih)
+    RewriteCond %{THE_REQUEST} ^GET\s(.*/)index\.php[\s?] [NC]
+    RewriteRule ^ %1 [R=301,L,NE]
+
+    # page.php → /page (GET saja; api/ & uploads/ dilewati)
+    RewriteCond %{REQUEST_URI} !/api/ [NC]
+    RewriteCond %{REQUEST_URI} !/uploads/ [NC]
+    RewriteCond %{THE_REQUEST} ^GET\s/([^?\s]+)\.php[\s?] [NC]
+    RewriteRule ^ /%1 [R=301,L,NE]
+
+    # Internal: /dashboard → dashboard.php (URL tetap bersih di browser)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+?)/?$ $1.php [L]
+
+    # ── FOLDER = 404 ──
+    # Semua folder yang dibuka langsung (uploads/, api/, assets/, data/, dst)
+    # dijawab 404 — file di dalamnya TETAP bisa diakses via link langsung.
+    # Root app (path kosong) dikecualikan biar index.php tetap jalan.
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.+$ 404.php [L]
+
+    # ── Path yang gak ada → template 404 (relatif, aman di subfolder) ──
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule . 404.php [L]
+</IfModule>
+
 # Protect config and data directory from direct web access
 <Files "config.private.php">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </Files>
+
+# Blokir SEMUA dotfiles & folder git (.git kebuka = source + hash password bocor!)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+RedirectMatch 404 /\.git
+
+# PHP upload limits — selaras dengan MAX_FILE_SIZE (100MB) di config.private.php
+# Upload dari dashboard dikirim 1 file per request, jadi post_max_size cukup 110M
+<IfModule mod_php.c>
+    php_value upload_max_filesize 100M
+    php_value post_max_size 110M
+    php_value max_file_uploads 20
+    php_value max_execution_time 300
+    php_value max_input_time 300
+    php_value memory_limit 256M
+</IfModule>
 
 # Security headers
 <IfModule mod_headers.c>
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set X-XSS-Protection "1; mode=block"
+    Header set Referrer-Policy "same-origin"
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    # Aktifkan baris di bawah SETELAH HTTPS jalan di cPanel (AutoSSL):
+    # Header set Strict-Transport-Security "max-age=31536000"
 </IfModule>
 
-# Redirect errors
-ErrorDocument 403 /index.php
-ErrorDocument 404 /index.php
+# ============================================================
+# ERROR PAGES
+# 403 (folder dibuka langsung / file terlarang) DISAMARKAN jadi 404
+# supaya orang gak bisa nebak folder mana yang ada isinya.
+# 404.php mengirim status 404 asli, jadi dari luar semua seragam.
+# ============================================================
+ErrorDocument 403 /404.php
+ErrorDocument 404 /404.php
+ErrorDocument 503 /503.php

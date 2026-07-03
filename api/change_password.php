@@ -1,6 +1,6 @@
 <?php
-session_start();
-require_once 'config.private.php';
+require_once __DIR__ . '/../config.private.php';
+secure_session_start();
 
 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     echo json_encode(['success' => false, 'message' => 'Not logged in']); exit;
@@ -32,7 +32,7 @@ if ($new_pw === $current_pw) {
 
 // Generate new hash and update config.private.php
 $new_hash   = password_hash($new_pw, PASSWORD_BCRYPT);
-$config_file = __DIR__ . '/config.private.php';
+$config_file = __DIR__ . '/../config.private.php';
 $config      = file_get_contents($config_file);
 
 // Replace the hash for this username

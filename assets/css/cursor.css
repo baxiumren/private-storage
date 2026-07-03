@@ -1,0 +1,43 @@
+/* ═══════════════════════════════════════════════════════════
+   MICKEY GLOVE CURSOR 🤍
+   - Normal   : sarung tangan telunjuk (hand)
+   - Interaktif: sarung tangan jari tengah (hand-fu) wkwk
+   Mau pakai gambar sendiri? Taruh PNG 32x32 di assets/cursor/
+   dengan nama hand.png & hand-fu.png — otomatis diprioritaskan.
+   Kalau gak ada PNG, fallback ke SVG bawaan.
+   ═══════════════════════════════════════════════════════════ */
+@media (pointer:fine){
+
+    /* Default: telunjuk. Hotspot di ujung jari */
+    html,body,html *{
+        cursor:url('../cursor/hand.png') 3 2,
+               url('../cursor/hand.svg') 16 2,
+               auto !important;
+    }
+
+    /* Elemen interaktif: jari tengah 🖕 */
+    a,button,select,label,summary,
+    .btn,.btn-icon,.btn-logout,.btn-back,.nav-burger,
+    .mm-item,.tfbtn,.view-btn,.pag-btn,.ctx-item,
+    .gsearch-result,.recent-item,.drop-zone,
+    th.sortable,input[type=checkbox],input[type=color],
+    .modal-close,.search-clear,.breadcrumb a,
+    a *,button *,.btn *,.btn-icon *,.mm-item *,.drop-zone *{
+        cursor:url('../cursor/hand-fu.png') 8 1,
+               url('../cursor/hand-fu.svg') 16 2,
+               pointer !important;
+    }
+
+    /* Kolom ketik: caret asli biar enak ngetik */
+    input[type=text],input[type=password],input[type=number],
+    input[type=search],input[type=email],textarea{
+        cursor:text !important;
+    }
+
+    /* Elemen disabled */
+    button:disabled,.btn:disabled{
+        cursor:url('../cursor/hand.png') 3 2,
+               url('../cursor/hand.svg') 16 2,
+               not-allowed !important;
+    }
+}
