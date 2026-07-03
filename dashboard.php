@@ -259,7 +259,7 @@ $trash_count = file_exists($trash_meta_file) ? count(json_decode(file_get_conten
             $is_img  = in_array($rf['ext'],['jpg','jpeg','png','gif','bmp','webp']);
         ?>
         <div class="recent-item"
-             onclick="viewFile('<?php echo htmlspecialchars(addslashes($rf['name']));?>','<?php echo $rf['ext'];?>')"
+             onclick="viewFile('<?php echo htmlspecialchars(addslashes($rf['name']));?>','<?php echo $rf['ext'];?>',false,'<?php echo htmlspecialchars(addslashes($rf['folder']));?>')"
              title="<?php echo htmlspecialchars($rf['name']);?> — <?php echo $rf['folder']?:'root';?>">
             <?php if($is_img): ?>
             <img src="<?php echo htmlspecialchars($rf_path);?>" loading="lazy" alt="" onerror="this.style.display='none'">

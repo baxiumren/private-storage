@@ -491,8 +491,8 @@ function showMoveMsg(msg,type){
 }
 
 // ══ COPY LINK ══
-function copyFileLink(filename){
-    const folder=new URLSearchParams(window.location.search).get('folder')||'';
+function copyFileLink(filename,folderOverride){
+    const folder=(folderOverride!==undefined&&folderOverride!==null)?folderOverride:(new URLSearchParams(window.location.search).get('folder')||'');
     const url=BASE_URL+'/uploads/'+(folder?folder+'/':'')+filename;
     if(navigator.clipboard)navigator.clipboard.writeText(url).then(()=>showToast('Link copied!','success'),()=>fallbackCopy(url));
     else fallbackCopy(url);
@@ -500,8 +500,10 @@ function copyFileLink(filename){
 function fallbackCopy(url){const el=document.createElement('input');el.style.position='absolute';el.style.left='-9999px';el.value=url;document.body.appendChild(el);el.select();document.execCommand('copy');document.body.removeChild(el);showToast('Link copied!','success');}
 
 // ══ PREVIEW ══
-function viewFile(filename,ext,fromLightbox=false){
-    const folder=new URLSearchParams(window.location.search).get('folder')||'';
+// folderOverride: dipakai Recently Added — file bisa berada di folder lain
+// dari yang sedang dibuka, jadi path-nya gak boleh ngikut ?folder= di URL.
+function viewFile(filename,ext,fromLightbox=false,folderOverride=null){
+    const folder=(folderOverride!==null)?folderOverride:(new URLSearchParams(window.location.search).get('folder')||'');
     const path='uploads/'+(folder?folder+'/':'')+filename;
     document.getElementById('fileName').textContent=filename;
     document.getElementById('previewBody').innerHTML='<div style="padding:50px;text-align:center;color:var(--text-muted);"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
@@ -514,7 +516,7 @@ function viewFile(filename,ext,fromLightbox=false){
         lbIndex=imageRows.findIndex(r=>r.dataset.name===filename);
     }
     const lbPrev=document.getElementById('lbPrev'),lbNext=document.getElementById('lbNext'),lbCtr=document.getElementById('lbCounter');
-    if(isImg && imageRows.length>1){
+    if(isImg && imageRows.length>1 && lbIndex>=0){
         lbPrev.style.display=''; lbNext.style.display=''; lbCtr.style.display='';
         lbCtr.textContent=(lbIndex+1)+' / '+imageRows.length;
         lbPrev.disabled=(lbIndex<=0); lbNext.disabled=(lbIndex>=imageRows.length-1);
@@ -529,8 +531,8 @@ function viewFile(filename,ext,fromLightbox=false){
                 <button onclick="toggleFullscreen()" class="btn btn-ghost btn-sm"><i class="fas fa-expand"></i> Fullscreen</button>
                 <button onclick="zoomImage()" class="btn btn-ghost btn-sm"><i class="fas fa-search-plus"></i> Zoom</button>
                 <button onclick="rotateImage()" class="btn btn-ghost btn-sm"><i class="fas fa-redo"></i> Rotate</button>
-                <button onclick="copyFileLink('${filename}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
-                <button onclick="copyFilePath('${filename}')" class="btn btn-ghost btn-sm"><i class="fas fa-code"></i> Copy Path</button>
+                <button onclick="copyFileLink('${filename}','${folder}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
+                <button onclick="copyFilePath('${filename}','${folder}')" class="btn btn-ghost btn-sm"><i class="fas fa-code"></i> Copy Path</button>
             </div>`;
         const img=document.getElementById('lbImg');
         img.onload=()=>{const info=document.getElementById('imgInfo');if(info)info.textContent=img.naturalWidth+'×'+img.naturalHeight+'px';};
@@ -545,7 +547,7 @@ function viewFile(filename,ext,fromLightbox=false){
             body.innerHTML=`<div style="text-align:left;background:rgba(0,0,0,.3);border:1px solid var(--glass-border);border-radius:10px;padding:18px;max-height:52vh;overflow:auto;margin-bottom:10px;"><pre style="color:var(--text);font-family:'Courier New',monospace;font-size:12px;white-space:pre-wrap;word-break:break-all;">${escapeHtml(display)}</pre></div>
             <div style="display:flex;justify-content:center;gap:8px;">
                 <button onclick="closeModal('previewModal');openFileEditor('${filename}','${ext}')" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit File</button>
-                <button onclick="copyFileLink('${filename}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
+                <button onclick="copyFileLink('${filename}','${folder}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
             </div>`;
         }).catch(()=>{body.innerHTML=`<div style="text-align:center;padding:30px;color:var(--text-muted);">Cannot load preview. <button onclick="downloadCurrentFile()" class="btn btn-primary" style="margin-top:12px;"><i class="fas fa-download"></i> Download</button></div>`;});
     } else if(ext === 'pdf'){
@@ -553,10 +555,10 @@ function viewFile(filename,ext,fromLightbox=false){
             <div style="display:flex;justify-content:center;gap:8px;margin-top:10px;">
                 <a href="${path}" target="_blank" class="btn btn-ghost btn-sm"><i class="fas fa-external-link-alt"></i> Open in New Tab</a>
                 <button onclick="downloadCurrentFile()" class="btn btn-ghost btn-sm"><i class="fas fa-download"></i> Download</button>
-                <button onclick="copyFileLink('${filename}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
+                <button onclick="copyFileLink('${filename}','${folder}')" class="btn btn-gold btn-sm"><i class="fas fa-link"></i> Copy Link</button>
             </div>`;
     } else {
-        body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:50px;margin-bottom:14px;">📄</div><h3 style="color:var(--text-dim);margin-bottom:8px;">No preview</h3><p style="font-size:13px;">.${ext} cannot be previewed</p><div style="display:flex;gap:8px;justify-content:center;margin-top:18px;"><button onclick="downloadCurrentFile()" class="btn btn-primary"><i class="fas fa-download"></i> Download</button><button onclick="copyFileLink('${filename}')" class="btn btn-gold"><i class="fas fa-link"></i> Copy Link</button></div></div>`;
+        body.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text-muted);"><div style="font-size:50px;margin-bottom:14px;">📄</div><h3 style="color:var(--text-dim);margin-bottom:8px;">No preview</h3><p style="font-size:13px;">.${ext} cannot be previewed</p><div style="display:flex;gap:8px;justify-content:center;margin-top:18px;"><button onclick="downloadCurrentFile()" class="btn btn-primary"><i class="fas fa-download"></i> Download</button><button onclick="copyFileLink('${filename}','${folder}')" class="btn btn-gold"><i class="fas fa-link"></i> Copy Link</button></div></div>`;
     }
 }
 function downloadCurrentFile(){if(!currentPreviewFile)return;const a=document.createElement('a');a.href=currentPreviewFile;a.download=currentPreviewFile.split('/').pop();document.body.appendChild(a);a.click();document.body.removeChild(a);showToast('Download started!','success');}
@@ -1095,8 +1097,8 @@ function toggleFullscreen(){
 }
 
 // ══ COPY FILE PATH ══
-function copyFilePath(filename){
-    const folder = new URLSearchParams(window.location.search).get('folder')||'';
+function copyFilePath(filename,folderOverride){
+    const folder = (folderOverride!==undefined&&folderOverride!==null)?folderOverride:(new URLSearchParams(window.location.search).get('folder')||'');
     const path = 'uploads/'+(folder?folder+'/':'')+filename;
     if(navigator.clipboard) navigator.clipboard.writeText(path).then(()=>showToast('Path copied!','success'));
     else fallbackCopy(path);
