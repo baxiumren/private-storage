@@ -214,7 +214,7 @@ $trash_count = file_exists($trash_meta_file) ? count(json_decode(file_get_conten
             <div class="field-row">
                 <div class="field">
                     <label class="field-label">Folder name</label>
-                    <input type="text" id="folderName" class="field-input" placeholder="my-folder" pattern="[a-zA-Z0-9_-]+">
+                    <input type="text" id="folderName" class="field-input" placeholder="my-folder" autocomplete="off" pattern="[a-zA-Z0-9_-]+">
                 </div>
                 <button onclick="createFolderAjax()" class="btn btn-primary"><i class="fas fa-plus"></i> Create</button>
             </div>
@@ -317,7 +317,7 @@ $trash_count = file_exists($trash_meta_file) ? count(json_decode(file_get_conten
             <h2><i class="fas fa-layer-group"></i> Files</h2>
             <div class="search-wrap">
                 <i class="fas fa-search search-icon"></i>
-                <input type="text" id="searchInput" class="search-input" placeholder="Search files & folders..." oninput="handleSearch(this.value)">
+                <input type="search" id="searchInput" class="search-input" placeholder="Search files & folders..." autocomplete="off" oninput="handleSearch(this.value)">
                 <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
             </div>
             <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
@@ -763,7 +763,7 @@ $trash_count = file_exists($trash_meta_file) ? count(json_decode(file_get_conten
         </div>
         <div class="modal-body" style="padding:16px 20px 10px;">
             <div style="display:flex;gap:9px;margin-bottom:14px;">
-                <input type="text" id="globalSearchInput" class="field-input" placeholder="Search filename across all folders..." oninput="onGlobalSearchInput()" onkeydown="if(event.key==='Enter')doGlobalSearch()">
+                <input type="search" id="globalSearchInput" class="field-input" placeholder="Search filename across all folders..." autocomplete="off" oninput="onGlobalSearchInput()" onkeydown="if(event.key==='Enter')doGlobalSearch()">
                 <button onclick="doGlobalSearch()" class="btn btn-primary" id="globalSearchBtn"><i class="fas fa-search"></i></button>
             </div>
             <div id="globalSearchResults" style="min-height:80px;max-height:420px;overflow-y:auto;"></div>
