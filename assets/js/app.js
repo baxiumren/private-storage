@@ -40,15 +40,28 @@ document.addEventListener('DOMContentLoaded', () => {
     initContextMenu();
     initKeyboard();
     initPasteUpload();
-    // Inline rename: dblclick on filename
-    document.querySelectorAll('.fname').forEach(el=>{
-        el.addEventListener('dblclick', e=>{
-            e.preventDefault(); e.stopPropagation();
-            const tr=el.closest('tr');
-            if(tr) showEditModal(tr.dataset.name, tr.dataset.isFolder==='1');
-        });
-    });
+    initRowOpen();
 });
+
+// ══ KLIK BARIS/KARTU = LANGSUNG BUKA ══
+// Folder → masuk ke dalamnya · File → preview.
+// Klik di tombol aksi / checkbox / link tetap jalan seperti biasa.
+function initRowOpen(){
+    const tbody=document.querySelector('#fileTableWrap tbody');
+    if(!tbody) return;
+    tbody.addEventListener('click', e=>{
+        if(e.target.closest('.actions,button,a,input,select,label')) return;
+        const tr=e.target.closest('tr');
+        if(!tr || !tr.dataset.name) return;
+        if(window.getSelection && String(window.getSelection())) return; // lagi nge-blok teks
+        const folder=new URLSearchParams(window.location.search).get('folder')||'';
+        if(tr.dataset.isFolder==='1'){
+            location.href='dashboard.php?folder='+(folder?folder+'/':'')+encodeURIComponent(tr.dataset.name);
+        } else {
+            viewFile(tr.dataset.name, tr.dataset.type);
+        }
+    });
+}
 
 // ══ MOBILE MENU (hamburger) ══
 function toggleMobileMenu(e){

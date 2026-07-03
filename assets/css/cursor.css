@@ -22,6 +22,7 @@
     .gsearch-result,.recent-item,.drop-zone,
     th.sortable,input[type=checkbox],input[type=color],
     .modal-close,.search-clear,.breadcrumb a,
+    #fileTableWrap tbody tr,#fileTableWrap tbody tr td,#fileTableWrap tbody .fname,#fileTableWrap tbody .thumb,#fileTableWrap tbody .file-emoji,
     a *,button *,.btn *,.btn-icon *,.mm-item *,.drop-zone *{
         cursor:url('../cursor/hand-fu.png') 8 1,
                url('../cursor/hand-fu.svg') 16 2,
